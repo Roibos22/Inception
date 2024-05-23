@@ -1,12 +1,12 @@
-version: "3.8"  # Adjust version if needed
+version: "3.8"
 
 services:
   inception:
     build:
-      context: .  # Use the current directory (where the docker-compose.yml resides)
+      context: ../  # Use the parent directory
       dockerfile: requirements/python/Dockerfile  # Specify the Dockerfile path
     volumes:
-      - .  # Mount the current directory's "app" folder to /app in the container
+      - ./app:/app  # Mount the current directory to /app in the container
     ports:
-      - "5000"
+      - "5000:5000"  # Expose port 5000 from the container to the host
     command: ["python", "app.py"]
