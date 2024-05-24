@@ -2,10 +2,9 @@ FROM python
 
 WORKDIR /app
 
-COPY requirements/python/requirements.txt .
+COPY ../srcs/requirements/python/requirements.txt .
 
 RUN pip install -r requirements.txt
-RUN pip install flask
 
 COPY . .
 
