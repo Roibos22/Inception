@@ -18,6 +18,7 @@ stop:
 # Target to clean up (stop and remove containers)
 clean: stop
 	@docker-compose -f srcs/docker-compose.yml rm -f
+	@echo docker rmi $(docker images -a -q) -f
 
 # Default target to run the container
 .PHONY: all
