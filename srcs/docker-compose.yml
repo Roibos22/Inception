@@ -1,12 +1,54 @@
 version: "3.8"
 
+volumes:
+  wordpress_data: {}
+  mariadb_data: {}
+
 services:
-  inception:
-    build:
-      context: ../  # Use the parent directory
-      dockerfile: srcs/requirements/python/Dockerfile  # Specify the Dockerfile path
+  wordpress:
+    build: 
+      context: ../
+      dockerfile: srcs/requirements/wordpress/Dockerfile
     volumes:
-      - ./app:/app  # Mount the current directory to /app in the container
-    ports:
-      - "5000:5000"  # Expose port 5000 from the container to the host
-    command: ["python", "app.py"]
+      - /home/login/data
+    #   - ./wordpress:/var/www/html/
+    # depends_on: db
+    # image: wordpress:latest
+    # ports:
+    #   - “8000:80”
+    # restart: always
+    environment:
+      WORDPRESS_DB_HOST: mariadb
+      WORDPRESS_DB_USER: root
+      WORDPRESS_DB_PASSWORD: $MYSQL_ROOT_PASSWORD
+      WORDPRESS_DB_NAME: $MYSQL_DATABASE
+  mariadb:
+    build:
+      context: ../
+      dockerfile: srcs/requirements/mariadb/Dockerfile
+    volumes:
+      - /home/login/data
+    # image: mariadb:10.5
+    # volumes:
+    #   - db_data:/var/lib/mysql
+    # restart: always
+    # environment:
+    #   MYSQL_ROOT_PASSWORD: <your-root-password>
+    #   MYSQL_DATABASE: <your-database-name>
+    #   MYSQL_USER: <your-user-name>
+    #   MYSQL_PASSWORD: <your-user-password>
+
+
+
+
+
+# services:
+#   inception:
+#     build:
+#       context: ../
+#       dockerfile: srcs/requirements/python/Dockerfile
+#     volumes:
+#       - ./app:/app
+#     ports:
+#       - "5000:5000"
+#     command: ["python", "app.py"]
