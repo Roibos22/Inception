@@ -3,8 +3,8 @@ PROJECT_NAME := inception
 
 # Target to build the Docker image
 up: clean
-	@docker-compose -f srcs/docker-compose.yml build
-	@docker-compose -f srcs/docker-compose.yml up
+	@docker-compose -f srcs/docker-compose.yml --env-file srcs/.env build
+	@docker-compose -f srcs/docker-compose.yml --env-file srcs/.env up
 
 
 # Target to run the container (using docker-compose)
@@ -18,7 +18,10 @@ stop:
 # Target to clean up (stop and remove containers)
 clean: stop
 	@docker-compose -f srcs/docker-compose.yml rm -f
+	# @docker rm $(docker ps -a -q)
 	@echo docker rmi $(docker images -a -q) -f
+
+
 
 # Default target to run the container
 .PHONY: all
