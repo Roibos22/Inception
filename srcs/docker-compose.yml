@@ -1,33 +1,39 @@
 version: "3.8"
 
-volumes:
-  wordpress_data: {}
-  mariadb_data: {}
-
 services:
-  wordpress:
-    build: 
+  inception:
+    build:
       context: ../
-      dockerfile: srcs/requirements/wordpress/Dockerfile
+      dockerfile: srcs/requirements/python/Dockerfile
     volumes:
-      - /home/login/data
+      - ./app:/app
+    ports:
+      - "5000:5000"
+    command: ["python3", "app.py"]
+# services:
+  # wordpress:
+  #   build: 
+  #     context: ../
+  #     dockerfile: srcs/requirements/wordpress/Dockerfile
+  #   volumes:
+  #     - /home/login/data
     #   - ./wordpress:/var/www/html/
     # depends_on: db
     # image: wordpress:latest
     # ports:
     #   - “8000:80”
     # restart: always
-    environment:
-      WORDPRESS_DB_HOST: mariadb
-      WORDPRESS_DB_USER: root
-      WORDPRESS_DB_PASSWORD: $MYSQL_ROOT_PASSWORD
-      WORDPRESS_DB_NAME: $MYSQL_DATABASE
-  mariadb:
-    build:
-      context: ../
-      dockerfile: srcs/requirements/mariadb/Dockerfile
-    volumes:
-      - /home/login/data
+  #   environment:
+  #     WORDPRESS_DB_HOST: mariadb
+  #     WORDPRESS_DB_USER: root
+  #     WORDPRESS_DB_PASSWORD: $DB_PASS
+  #     WORDPRESS_DB_NAME: $DB_NAME
+  # mariadb:
+  #   build:
+  #     context: ../
+  #     dockerfile: srcs/requirements/mariadb/Dockerfile
+  #   volumes:
+  #     - /home/login/data
     # image: mariadb:10.5
     # volumes:
     #   - db_data:/var/lib/mysql
@@ -37,18 +43,6 @@ services:
     #   MYSQL_DATABASE: <your-database-name>
     #   MYSQL_USER: <your-user-name>
     #   MYSQL_PASSWORD: <your-user-password>
-
-
-
-
-
-# services:
-#   inception:
-#     build:
-#       context: ../
-#       dockerfile: srcs/requirements/python/Dockerfile
-#     volumes:
-#       - ./app:/app
-#     ports:
-#       - "5000:5000"
-#     command: ["python", "app.py"]
+# volumes:
+#   wordpress_data: {}
+#   mariadb_data: {}
