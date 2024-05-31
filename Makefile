@@ -1,12 +1,27 @@
 # Define project name (adjust as needed)
 PROJECT_NAME := inception
 
+
+# Target to stop all docker containers
+stop-containers:
+	@docker kill $$(docker ps -a -q)
+
+delete-containers:
+	@docker system prune
+
+# Target to delete all docker images
+delete-images:
+	@docker rmi $$(docker images -a -q) -f
+
+clean: stop-containers delete-containers delete-images
+
+
 # Target to build the Docker image
-build: clean
-	@docker-compose -f srcs/docker-compose.yml --env-file srcs/.env build
+build:
+	docker-compose -f srcs/docker-compose.yml --env-file srcs/.env build -d
 
 up: build
-	@docker-compose -f srcs/docker-compose.yml --env-file srcs/.env up
+	docker-compose -f srcs/docker-compose.yml --env-file srcs/.env up -d
 
 # Target to stop the container (using docker-compose)
 stop:

@@ -1,19 +1,24 @@
 version: "3.8"
 
 services:
-  # inception:
-  #   build:
-  #     context: ../
-  #     dockerfile: srcs/requirements/python/Dockerfile
-  #   volumes:
-  #     - ./app:/app
-  #   ports:
-  #     - "5000:5000"
-  #   command: ["python3", "app.py"]
   nginx:
     build:
       context: ../
       dockerfile: srcs/requirements/nginx/Dockerfile
+    ports: 
+      - "443:443"
+    env_file:
+      - .env
+    restart: unless-stopped
+  mariadb:
+    build:
+      context: ../
+      dockerfile: srcs/requirements/mariadb/Dockerfile
+    ports: 
+      - "3306:3306"
+    env_file:
+      - .env
+    restart: unless-stopped
 
 # servises:
 # build:
