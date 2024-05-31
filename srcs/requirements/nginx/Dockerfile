@@ -10,7 +10,7 @@ rm -rf /var/lib/apt/lists/*
 # RUN rm /etc/nginx/sites-enabled/default
 
 # Copy custom NGINX config file
-COPY conf/nginx.conf /etc/nginx/nginx.conf
+COPY srcs/requirements/nginx/conf/nginx.conf /etc/nginx/nginx.conf
 
 # TSL SETUP
 RUN apt-get update
