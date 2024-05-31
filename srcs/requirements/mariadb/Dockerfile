@@ -1,8 +1,9 @@
 FROM debian:buster
 
-RUN apt update -y
-RUN apt upgrade -y
-RUN apt-get install mariadb-server -y
+RUN apt-get update -y && \
+    apt-get upgrade -y && \
+    apt-get install -y mariadb-server procps && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY tools/create_db.sh /usr/local/bin/create_db.sh
 RUN chmod +x /usr/local/bin/create_db.sh
