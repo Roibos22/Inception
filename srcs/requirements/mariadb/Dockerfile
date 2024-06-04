@@ -6,9 +6,10 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 
 COPY srcs/requirements/mariadb/tools/create_db.sh /usr/local/bin/create_db.sh
+COPY srcs/requirements/mariadb/conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
+# COPY tools/create_db.sh /usr/local/bin/create_db.sh
+# COPY conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
 RUN chmod +x /usr/local/bin/create_db.sh
-
-COPY srcs/requirements/mariadb/conf/50-server.cnf	/etc/mysql/mariadb.conf.d/50-server.cnf
 
 EXPOSE 3306
 
