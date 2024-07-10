@@ -3,8 +3,10 @@ PROJECT_NAME := inception
 build:
 	docker-compose -f srcs/docker-compose.yml --env-file srcs/.env build --no-cache
 
-up: clean-docker build
+up:
 	docker-compose -f srcs/docker-compose.yml --env-file srcs/.env up -d --force-recreate
+
+run: clean-docker build up
 
 stop-containers:
 	@echo -n "Stopping all containers ..."
@@ -33,7 +35,8 @@ all: help
 help:
 	@echo "Available targets:"
 	@echo "  build                  - Build the Docker images"
-	@echo "  up                     - clean-docker, build, run the container (detached)"
+	@echo "  up                     - run the containers (detached)"
+	@echo "  run                    - clean-docker, build, up"
 	@echo "  stop-containers        - Stop the containers"
 	@echo "  delete-containters     - Remove stopped containers"
 	@echo "  delete-images          - Remove unused images"
