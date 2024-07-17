@@ -7,6 +7,9 @@ RUN apt-get update -y && apt-get upgrade -y
 # install mariadb for database and procps for process control 
 RUN apt-get install -y mariadb-server procps
 
+
+
+
 # clean up cached package files
 RUN rm -rf /var/lib/apt/lists/*
 
