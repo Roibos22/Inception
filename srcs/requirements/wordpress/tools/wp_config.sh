@@ -1,0 +1,61 @@
+#!/bin/bash
+
+
+### WAIT FOR MARIADB SERVER TO BE RUNNING
+
+
+end_time=$((SECONDS + 20))
+while (( SECONDS < end_time )); do
+    if nc -zq 1 mariadb 3306; then # ping the MariaDB container with a 1-second timeout
+        echo "[========MARIADB IS UP AND RUNNING========]"
+        break # exit the loop if MariaDB is up
+    else
+        echo "[========WAITING FOR MARIADB TO START...========]"
+        sleep 1 # wait for 1 second before trying again
+    fi
+done
+
+if (( SECONDS >= end_time )); then
+    echo "[========MARIADB IS NOT RESPONDING========]"
+fi
+
+
+### INSTALL WORDPRESS
+
+
+# install wordpress CLI (command line interface)
+curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+
+# make the wp command globally executable
+chmod +x wp-cli.phar
+mv wp-cli.phar /usr/local/bin/wp 
+
+# go to wordpress directory and change its permission and owner so nginx can work with it
+cd /var/www/wordpress
+chmod -R 755 /var/www/wordpress/
+chown -R www-data:www-data /var/www/wordpress
+
+# download wordpress into /var/www/wordpress directory
+wp core download --allow-root
+
+# create wp-config.php file with details
+wp core config --dbhost=mariadb:3306 --dbname="$MYSQL_DB" --dbuser="$MYSQL_USER" --dbpass="$MYSQL_PASSWORD" --allow-root
+
+# install wordpress with details
+wp core install --url="$DOMAIN_NAME" --title="$WP_TITLE" --admin_user="$WP_ADMIN_N" --admin_password="$WP_ADMIN_P" --admin_email="$WP_ADMIN_E" --allow-root
+
+# create new user
+wp user create "$WP_U_NAME" "$WP_U_EMAIL" --user_pass="$WP_U_PASS" --role="$WP_U_ROLE" --allow-root
+
+
+### CONFIGURE PHP
+
+
+# change listen port from unix socket to 9000
+sed -i '36 s@/run/php/php7.4-fpm.sock@9000@' /etc/php/7.4/fpm/pool.d/www.conf
+
+# create a directory for php-fpm
+mkdir -p /run/php
+
+# start php-fpm service in the foreground to keep the container running
+/usr/sbin/php-fpm7.4 -F
