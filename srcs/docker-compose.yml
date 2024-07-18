@@ -43,6 +43,7 @@ services:
       - wordpress
     volumes:
       - wordpress:/var/www/wordpress
+      - ./nginx-logs:/var/log/nginx
     networks:
       - inception
     restart: unless-stopped
