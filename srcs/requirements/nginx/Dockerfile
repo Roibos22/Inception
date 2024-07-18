@@ -12,6 +12,7 @@ RUN rm -rf /var/lib/apt/lists/*
 
 # copy custom NGINX config file
 COPY srcs/requirements/nginx/conf/nginx.conf /etc/nginx/nginx.conf
+#COPY ./conf/nginx.conf /etc/nginx/nginx.conf
 
 # generate ssl certificate and save it in ssl directory
 RUN mkdir -p /etc/nginx/ssl
