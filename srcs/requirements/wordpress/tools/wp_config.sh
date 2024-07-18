@@ -50,7 +50,6 @@ wp user create "$WP_USER_NAME" "$WP_USER_EMAIL" --user_pass="$WP_USER_PASS" --ro
 
 ### CONFIGURE PHP
 
-
 # change listen port from unix socket to 9000
 sed -i '36 s@/run/php/php7.4-fpm.sock@9000@' /etc/php/7.4/fpm/pool.d/www.conf
 

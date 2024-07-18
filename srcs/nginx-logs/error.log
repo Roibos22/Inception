@@ -5,3 +5,23 @@
 2024/07/18 14:36:07 [error] 7#7: *3 connect() failed (111: Connection refused) while connecting to upstream, client: 172.18.0.1, server: lgrimmei.42.fr, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "lgrimmei.42.fr"
 2024/07/18 14:36:07 [error] 7#7: *3 connect() failed (111: Connection refused) while connecting to upstream, client: 172.18.0.1, server: lgrimmei.42.fr, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "lgrimmei.42.fr"
 2024/07/18 14:36:08 [error] 7#7: *3 connect() failed (111: Connection refused) while connecting to upstream, client: 172.18.0.1, server: lgrimmei.42.fr, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "lgrimmei.42.fr"
+2024/07/18 15:26:57 [error] 7#7: *2 connect() failed (111: Connection refused) while connecting to upstream, client: 172.18.0.1, server: lgrimmei.42.fr, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost"
+2024/07/18 17:17:41 [error] 7#7: *2 connect() failed (111: Connection refused) while connecting to upstream, client: 172.18.0.1, server: lgrimmei.42.fr, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost"
+2024/07/18 17:18:23 [error] 7#7: *6 connect() failed (111: Connection refused) while connecting to upstream, client: 172.18.0.1, server: lgrimmei.42.fr, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "lgrimmei.42.fr"
+2024/07/18 17:27:42 [error] 7#7: *2 connect() failed (111: Connection refused) while connecting to upstream, client: 172.18.0.1, server: lgrimmei.42.fr, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "lgrimmei.42.fr"
+2024/07/18 17:48:49 [error] 7#7: *2 connect() failed (111: Connection refused) while connecting to upstream, client: 172.18.0.1, server: lgrimmei.42.fr, request: "GET / HTTP/1.1", upstream: "fastcgi://172.18.0.3:9000", host: "lgrimmei.42.fr"
+2024/07/18 18:12:35 [emerg] 1#1: invalid host in upstream "http://127.0.0.1:9000" in /etc/nginx/nginx.conf:28
+2024/07/18 18:12:36 [emerg] 1#1: invalid host in upstream "http://127.0.0.1:9000" in /etc/nginx/nginx.conf:28
+2024/07/18 18:12:36 [emerg] 1#1: invalid host in upstream "http://127.0.0.1:9000" in /etc/nginx/nginx.conf:28
+2024/07/18 18:12:37 [emerg] 1#1: invalid host in upstream "http://127.0.0.1:9000" in /etc/nginx/nginx.conf:28
+2024/07/18 18:12:38 [emerg] 1#1: invalid host in upstream "http://127.0.0.1:9000" in /etc/nginx/nginx.conf:28
+2024/07/18 18:12:40 [emerg] 1#1: invalid host in upstream "http://127.0.0.1:9000" in /etc/nginx/nginx.conf:28
+2024/07/18 18:12:43 [emerg] 1#1: invalid host in upstream "http://127.0.0.1:9000" in /etc/nginx/nginx.conf:28
+2024/07/18 18:12:50 [emerg] 1#1: invalid host in upstream "http://127.0.0.1:9000" in /etc/nginx/nginx.conf:28
+2024/07/18 18:13:03 [emerg] 1#1: invalid host in upstream "http://127.0.0.1:9000" in /etc/nginx/nginx.conf:28
+2024/07/18 18:13:29 [emerg] 1#1: invalid host in upstream "http://127.0.0.1:9000" in /etc/nginx/nginx.conf:28
+2024/07/18 18:14:21 [emerg] 1#1: invalid host in upstream "http://127.0.0.1:9000" in /etc/nginx/nginx.conf:28
+2024/07/18 18:17:05 [error] 8#8: *2 connect() failed (111: Connection refused) while connecting to upstream, client: 172.18.0.1, server: lgrimmei.42.fr, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "lgrimmei.42.fr"
+2024/07/18 18:17:05 [error] 8#8: *2 open() "/var/www/wordpress/favicon.ico" failed (2: No such file or directory), client: 172.18.0.1, server: lgrimmei.42.fr, request: "GET /favicon.ico HTTP/1.1", host: "lgrimmei.42.fr", referrer: "https://lgrimmei.42.fr/"
+2024/07/18 18:17:07 [error] 8#8: *4 connect() failed (111: Connection refused) while connecting to upstream, client: 172.18.0.1, server: lgrimmei.42.fr, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "lgrimmei.42.fr"
+2024/07/18 18:17:07 [error] 8#8: *4 connect() failed (111: Connection refused) while connecting to upstream, client: 172.18.0.1, server: lgrimmei.42.fr, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "lgrimmei.42.fr"
