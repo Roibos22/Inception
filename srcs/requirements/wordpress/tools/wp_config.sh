@@ -56,5 +56,10 @@ sed -i '36 s@/run/php/php7.4-fpm.sock@9000@' /etc/php/7.4/fpm/pool.d/www.conf
 # create a directory for php-fpm
 mkdir -p /run/php
 
+# restart php-fpm service to apply changes
+# service php7.4-fpm restart
+
 # start php-fpm service in the foreground to keep the container running
 /usr/sbin/php-fpm7.4 -F
+
+
