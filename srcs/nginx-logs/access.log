@@ -288,3 +288,6 @@
 172.18.0.1 - - [19/Jul/2024:15:33:35 +0000] "POST /wp-admin/admin-ajax.php HTTP/1.1" 200 58 "https://lgrimmei.42.fr/wp-admin/edit-comments.php" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0"
 172.18.0.1 - - [19/Jul/2024:15:35:35 +0000] "POST /wp-admin/admin-ajax.php HTTP/1.1" 200 58 "https://lgrimmei.42.fr/wp-admin/edit-comments.php" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0"
 172.18.0.1 - - [19/Jul/2024:15:37:35 +0000] "POST /wp-admin/admin-ajax.php HTTP/1.1" 200 58 "https://lgrimmei.42.fr/wp-admin/edit-comments.php" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0"
+172.18.0.1 - - [19/Jul/2024:15:49:26 +0000] "POST /wp-admin/admin-ajax.php HTTP/1.1" 200 58 "https://lgrimmei.42.fr/wp-admin/edit-comments.php" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0"
+172.18.0.1 - - [19/Jul/2024:15:50:26 +0000] "POST /wp-admin/admin-ajax.php HTTP/1.1" 200 58 "https://lgrimmei.42.fr/wp-admin/edit-comments.php" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0"
+172.18.0.1 - - [19/Jul/2024:15:52:26 +0000] "POST /wp-admin/admin-ajax.php HTTP/1.1" 200 58 "https://lgrimmei.42.fr/wp-admin/edit-comments.php" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0"

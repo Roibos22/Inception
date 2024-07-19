@@ -1,5 +1,9 @@
 PROJECT_NAME := inception
 
+init:
+	@echo "Initializing Files and Credentials ..."
+	@./srcs/./init.sh
+
 build:
 	docker-compose -f srcs/docker-compose.yml --env-file srcs/.env build --no-cache
 
