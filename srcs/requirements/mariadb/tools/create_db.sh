@@ -18,9 +18,15 @@ if [ "$DB_EXISTS" -eq 1 ]; then
     mysql -uroot -p"$MDB_ROOT_PASSWORD" -e "FLUSH PRIVILEGES;" || { echo 'Failed to flush privileges'; exit 1; }
 fi
 
+# stop the MariaDB service started by the service command
+service mariadb stop
+
+# start mariadb in the foreground to keep the container running
+exec mysqld_safe --port=3306 --bind-address=0.0.0.0 --datadir='/var/lib/mysql'
+
 # shutdown and restart mariadb in background and with new config
-mysqladmin -u root -p$MDB_ROOT_PASSWORD # shutdown
-mysqld_safe --port=3306 --bind-address=0.0.0.0 --datadir='/var/lib/mysql'
+#mysqladmin -u root -p$MDB_ROOT_PASSWORD # shutdown
+#mysqld_safe --port=3306 --bind-address=0.0.0.0 --datadir='/var/lib/mysql'
 
 # create never ending process in foreground to keep container running
-tail -f /dev/null
+#tail -f /dev/null
