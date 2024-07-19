@@ -7,7 +7,7 @@ RUN mkdir -p /var/www/wordpress
 RUN apt-get update -y && apt-get upgrade -y
 
 # install packages
-RUN apt-get install -y wget php php7.4-fpm php-mysql mariadb-client curl netcat-traditional sendmail
+RUN apt-get install -y wget php php7.4-fpm php-mysql mariadb-client curl netcat-traditional #sendmail
 
 # clean up cached package files
 RUN rm -rf /var/lib/apt/lists/*
