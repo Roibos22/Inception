@@ -32,6 +32,12 @@ delete-images:
 
 clean-docker: stop-containers delete-containers delete-images
 
+clean:
+	@rm -fr secrets
+	@rm -fr srcs/.env
+	@rm -fr ../../data
+
+
 # clea data folders and env file and system prune
 
 .PHONY: build up stop-containers delete-containers delete-images clean-docker all help init

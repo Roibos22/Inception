@@ -15,8 +15,8 @@ COPY srcs/requirements/nginx/conf/nginx.conf /etc/nginx/nginx.conf
 #COPY ./conf/nginx.conf /etc/nginx/nginx.conf
 
 # generate ssl certificate and save it in ssl directory
-RUN mkdir -p /home/lgrimmei/data/ssl
-RUN openssl req -x509 -nodes -out /home/lgrimmei/data/ssl/inception.crt -keyout /home/lgrimmei/data/ssl/inception.key -subj "/C=FR/ST=IDF/L=Paris/O=42/OU=42/CN=lgrimmei.42.fr/UID=lgrimmei"
+#RUN mkdir -p /home/lgrimmei/data/ssl
+#RUN openssl req -x509 -nodes -out /home/lgrimmei/data/ssl/inception.crt -keyout /home/lgrimmei/data/ssl/inception.key -subj "/C=FR/ST=IDF/L=Paris/O=42/OU=42/CN=lgrimmei.42.fr/UID=lgrimmei"
 
 # expose HTTP and HTTPS ports
 EXPOSE 443
