@@ -1,1 +1,2 @@
 2024/07/20 20:34:07 [error] 10#10: *15 open() "/var/www/wordpress/favicon.ico" failed (2: No such file or directory), client: 172.18.0.1, server: lgrimmei.42.fr, request: "GET /favicon.ico HTTP/1.1", host: "lgrimmei.42.fr", referrer: "https://lgrimmei.42.fr/"
+2024/07/20 20:39:17 [error] 7#7: *3 directory index of "/var/www/wordpress/" is forbidden, client: 172.18.0.1, server: lgrimmei.42.fr, request: "GET / HTTP/1.1", host: "lgrimmei.42.fr"

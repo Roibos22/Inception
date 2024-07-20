@@ -62,6 +62,9 @@ services:
     networks:
       - inception
     restart: unless-stopped
+    secrets:
+      - key
+      - cert
 
 volumes:
   mariadb:
@@ -93,3 +96,7 @@ secrets:
     file: ../secrets/wp_root_password.txt
   wp_user_pw:
     file: ../secrets/wp_user_password.txt
+  cert:
+    file: ../secrets/inception.crt
+  key:
+    file: ../secrets/inception.key
