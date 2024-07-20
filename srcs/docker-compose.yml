@@ -14,6 +14,13 @@ services:
     networks:
       - inception
     restart: unless-stopped
+    environment:
+      MDB_PW: /run/secrets/mdb_pw
+      MDB_ROOT_PW: /run/secrets/mdb_root_pw
+    secrets:
+      - mdb_pw
+      - mdb_root_pw
+
 
   wordpress:
     container_name: wordpress
@@ -29,6 +36,14 @@ services:
     networks:
       - inception
     restart: unless-stopped
+    environment:
+      MDB_PW: /run/secrets/mdb_pw
+      WP_ADMIN_PW: /run/secrets/wp_admin_pwd
+      WP_USER_PW: /run/secrets/wp_user_pwd
+    secrets:
+      - mdb_pw
+      - wp_admin_pw
+      - wp_user_pw
     
   nginx:
     container_name: nginx
@@ -67,3 +82,14 @@ volumes:
 networks:
   inception:
     name: inception
+
+
+secrets:
+  mdb_pw:
+    file: ../secrets/db_password.txt
+  mdb_root_pw:
+    file: ../secrets/db_root_password.txt
+  wp_admin_pw:
+    file: ../secrets/wp_root_password.txt
+  wp_user_pw:
+    file: ../secrets/wp_user_password.txt

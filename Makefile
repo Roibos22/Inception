@@ -32,7 +32,9 @@ delete-images:
 
 clean-docker: stop-containers delete-containers delete-images
 
-.PHONY: build up stop-containers delete-containers delete-images clean-docker all help
+# clea data folders and env file and system prune
+
+.PHONY: build up stop-containers delete-containers delete-images clean-docker all help init
 
 all: help
 
