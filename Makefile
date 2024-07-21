@@ -42,6 +42,8 @@ status:
 	@docker images
 	@echo "\e[34mCONTAINER OVERVIEW\e[0m"
 	@docker ps -a
+	@echo "\e[34mNETWORK OVERVIEW\e[0m"
+	@docker network ls
 	@echo "\e[34mCONTAINER LOGS\e[0m"
 	@if [ ! -f $(ENV_FILE) ]; then touch $(ENV_FILE); fi
 	@docker compose -f $(COMPOSE_FILE) logs
@@ -57,8 +59,6 @@ clean: remove
 	@docker system prune --all --force
 	@echo "\e[32mPrune complete\e[0m"
 
-.PHONY: init run stop start down status clean
-
 # Default target
 all: help
 
@@ -73,3 +73,5 @@ help:
 	@echo "  status                 - Show status of all containers"
 	@echo "  clean                  - Clean up secrets and environment files and prune system"
 	@echo "  help                   - Show this help message"
+
+.PHONY: init run stop start down status clean
