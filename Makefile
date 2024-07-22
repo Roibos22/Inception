@@ -53,7 +53,7 @@ clean: remove
 	@echo "\e[34mCleaning up secrets and environment files ...\e[0m"
 	@rm -fr $(SECRETS_DIR) || true
 	@rm -fr $(ENV_FILE) || true
-	@rm -fr $(DATA_DIR) || ture
+	@rm -fr $(DATA_DIR) || true
 	@echo "\e[32mClean up complete\e[0m"
 	@echo "\e[34mPruning Docker system ...\e[0m"
 	@docker system prune --all --force

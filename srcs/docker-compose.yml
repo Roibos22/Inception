@@ -37,8 +37,8 @@ services:
     restart: unless-stopped
     environment:
       MDB_PW: /run/secrets/mdb_pw
-      WP_ADMIN_PW: /run/secrets/wp_admin_pwd
-      WP_USER_PW: /run/secrets/wp_user_pwd
+      WP_ADMIN_PW: /run/secrets/wp_admin_pw
+      WP_USER_PW: /run/secrets/wp_user_pw
     secrets:
       - mdb_pw
       - wp_admin_pw
