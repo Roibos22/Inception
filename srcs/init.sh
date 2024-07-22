@@ -2,7 +2,7 @@
 
 # Function to generate a random password
 generate_password() {
-  openssl rand -base64 16
+  openssl rand -base64 8
 }
 
 # CREATE WORDPRESS DIRECTORY
@@ -28,6 +28,7 @@ DIR="/home/lgrimmei/Desktop/Inception/secrets"
 if [ -d "$DIR" ]; then
   rm -fr "$DIR"
   echo -e "\e[33m✔\e[0m Directory $DIR removed."
+fi
 mkdir secrets
 echo -e "\e[32m✔\e[0m Directory $DIR created."
 generate_password > secrets/wp_user_password.txt
@@ -35,7 +36,6 @@ generate_password > secrets/wp_root_password.txt
 generate_password > secrets/db_password.txt
 generate_password > secrets/db_root_password.txt
 echo -e "\e[32m✔\e[0m Secrets created."
-fi
 
 # CREATE SSL DIRECTORY
 DIR="/home/lgrimmei/data/ssl"
