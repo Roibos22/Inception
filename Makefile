@@ -1,57 +1,75 @@
-PROJECT_NAME := inception
+# FILES AND DIRS
+COMPOSE_FILE	:= srcs/docker-compose.yml
+INIT_SCRIPT		:= ./srcs/init.sh
+SECRETS_DIR		:= ./secrets
+DATA_DIR		:= ../../data
+ENV_FILE		:= ./srcs/.env
 
+# Initialize data folder, credentials and environment
 init:
-	@echo "Initializing Files and Credentials ..."
-	@./srcs/./init.sh
+	@echo "\e[34mInitializing Files and Credentials...\e[0m"
+	@$(INIT_SCRIPT)
+	@echo "\e[32mInitialization complete\e[0m"
 
-build:
-	docker-compose -f srcs/docker-compose.yml --env-file srcs/.env build --no-cache
+# Run containers in detached mode
+run: 
+	@echo "\e[34mStarting containers ......\e[0m"
+	docker compose -f $(COMPOSE_FILE) up -d --force-recreate --build
+	@echo "\e[32mContainers started\e[0m"
 
-up:
-	docker-compose -f srcs/docker-compose.yml --env-file srcs/.env up -d --force-recreate
-
-run: clean-docker build up
-
-stop-containers:
-	@echo -n "Stopping all containers ..."
+# Stop all running containers
+stop:
+	@echo "\e[34mStopping all containers ...\e[0m"
 	@docker stop $$(docker ps -q) > /dev/null 2>&1 || true
-	@echo " \e[32mdone\e[0m"
+	@echo "\e[32mContainers stopped\e[0m"
 
-delete-containers:
-	@echo -n "Removing all containers ..."
-	@docker rm -f $$(docker ps -aq) > /dev/null 2>&1 || true
-	@echo " \e[32mdone\e[0m"
+# Start stopped containers
+start:
+	@echo "\e[34mStarting stopped containers ...\e[0m"
+	docker compose -f $(COMPOSE_FILE) start
+	@echo " \e[32mContainers started\e[0m"
 
-delete-images:
-	@echo -n "Removing all images     ..."
-	@$(eval IMAGES := $(shell docker images -a -q))
-	@if [ -n "$(IMAGES)" ]; then \
-        docker rmi $(IMAGES) -f > /dev/null 2>&1 || true; \
-	fi
-	@echo " \e[32mdone\e[0m"
+# Remove all containers
+remove:
+	@echo "\e[34mRemoving containers ...\e[0m"
+	@if [ ! -f $(ENV_FILE) ]; then touch $(ENV_FILE); fi
+	@docker compose -f $(COMPOSE_FILE) down
+	@echo "\e[32mContainers removed\e[0m"
 
-clean-docker: stop-containers delete-containers delete-images
+# Show status of all containers
+status:
+	@echo "\e[34mIMAGES OVERVIEW\e[0m"
+	@docker images
+	@echo "\e[34mCONTAINER OVERVIEW\e[0m"
+	@docker ps -a
+	@echo "\e[34mCONTAINER LOGS\e[0m"
+	@if [ ! -f $(ENV_FILE) ]; then touch $(ENV_FILE); fi
+	@docker compose -f $(COMPOSE_FILE) logs
 
-clean:
-	@rm -fr secrets
-	@rm -fr srcs/.env
-	@rm -fr ../../data
+# Clean up secrets and environment files and prune docker system
+clean: remove
+	@echo "\e[34mCleaning up secrets and environment files ...\e[0m"
+	@rm -fr $(SECRETS_DIR) || true
+	@rm -fr $(ENV_FILE) || true
+	@rm -fr $(DATA_DIR) || ture
+	@echo "\e[32mClean up complete\e[0m"
+	@echo "\e[34mPruning Docker system ...\e[0m"
+	@docker system prune --all --force
+	@echo "\e[32mPrune complete\e[0m"
 
+.PHONY: init run stop start down status clean
 
-# clea data folders and env file and system prune
-
-.PHONY: build up stop-containers delete-containers delete-images clean-docker all help init
-
+# Default target
 all: help
 
+# Help message
 help:
 	@echo "Available targets:"
-	@echo "  build                  - Build the Docker images"
-	@echo "  up                     - run the containers (detached)"
-	@echo "  run                    - clean-docker, build, up"
-	@echo "  stop-containers        - Stop the containers"
-	@echo "  delete-containters     - Remove stopped containers"
-	@echo "  delete-images          - Remove unused images"
-	@echo "  clean-docker           - stop-containers, delete-containers, delete-images"
-	@echo "  all                    - help (default)"
+	@echo "  init                   - Initialize data folders, credentials, and environment"
+	@echo "  run                    - Run the containers (detached)"
+	@echo "  stop                   - Stop all running containers"
+	@echo "  start                  - Start stopped containers"
+	@echo "  remove                 - Remove the containers"
+	@echo "  status                 - Show status of all containers"
+	@echo "  clean                  - Clean up secrets and environment files and prune system"
 	@echo "  help                   - Show this help message"
