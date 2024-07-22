@@ -14,13 +14,13 @@ init:
 # Run containers in detached mode
 run: 
 	@echo "\e[34mStarting containers ......\e[0m"
-	docker compose -f $(COMPOSE_FILE) up -d --force-recreate --build
+	@docker compose -f $(COMPOSE_FILE) up -d --force-recreate --build
 	@echo "\e[32mContainers started\e[0m"
 
 # Stop all running containers
 stop:
 	@echo "\e[34mStopping all containers ...\e[0m"
-	@docker stop $$(docker ps -q) > /dev/null 2>&1 || true
+	docker stop $$(docker ps -q) > /dev/null 2>&1 || true
 	@echo "\e[32mContainers stopped\e[0m"
 
 # Start stopped containers
