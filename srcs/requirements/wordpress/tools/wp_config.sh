@@ -1,8 +1,6 @@
 #!/bin/bash
 
-
 ### WAIT FOR MARIADB SERVER TO BE RUNNING
-
 
 end_time=$((SECONDS + 10))
 while (( SECONDS < end_time )); do
