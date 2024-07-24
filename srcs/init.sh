@@ -29,7 +29,7 @@ if [ -d "$DIR" ]; then
   rm -fr "$DIR"
   echo -e "\e[33m✔\e[0m Directory $DIR removed."
 fi
-mkdir secrets
+mkdir -m 775 secrets
 echo -e "\e[32m✔\e[0m Directory $DIR created."
 generate_password > secrets/wp_user_password.txt
 generate_password > secrets/wp_root_password.txt
