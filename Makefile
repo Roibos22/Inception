@@ -5,6 +5,18 @@ SECRETS_DIR		:= ./secrets
 DATA_DIR		:= ../../data
 ENV_FILE		:= ./srcs/.env
 
+# Help message
+help:
+	@echo "Available targets:"
+	@echo "  init                   - Initialize data folders, credentials, and environment"
+	@echo "  run                    - Run the containers (detached)"
+	@echo "  stop                   - Stop all running containers"
+	@echo "  start                  - Start stopped containers"
+	@echo "  remove                 - Remove the containers"
+	@echo "  status                 - Show status of all containers"
+	@echo "  clean                  - Clean up secrets and environment files and prune system"
+	@echo "  help                   - Show this help message"
+
 # Initialize data folder, credentials and environment
 init:
 	@echo "\e[34mInitializing Files and Credentials...\e[0m"
@@ -59,19 +71,4 @@ clean: remove
 	@docker system prune --all --force
 	@echo "\e[32mPrune complete\e[0m"
 
-# Default target
-all: help
-
-# Help message
-help:
-	@echo "Available targets:"
-	@echo "  init                   - Initialize data folders, credentials, and environment"
-	@echo "  run                    - Run the containers (detached)"
-	@echo "  stop                   - Stop all running containers"
-	@echo "  start                  - Start stopped containers"
-	@echo "  remove                 - Remove the containers"
-	@echo "  status                 - Show status of all containers"
-	@echo "  clean                  - Clean up secrets and environment files and prune system"
-	@echo "  help                   - Show this help message"
-
-.PHONY: init run stop start down status clean
+.PHONY: all init run stop start down status clean
