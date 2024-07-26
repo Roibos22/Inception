@@ -37,15 +37,6 @@ generate_password > secrets/db_password.txt
 generate_password > secrets/db_root_password.txt
 echo -e "\e[32m✔\e[0m Secrets created."
 
-# CREATE SSL DIRECTORY
-DIR="/home/lgrimmei/data/ssl"
-if [ -d "$DIR" ]; then
-  rm -fr "$DIR"
-  echo -e "\e[33m✔\e[0m Directory $DIR removed."
-fi
-mkdir -p "$DIR"
-echo -e "\e[32m✔\e[0m Directory $DIR created."
-
 # CREATE SSL CERTIFICATES
 if [ ! -f "secrets/inception.crt" ] || [ ! -f "secrets/inception.key" ]; then
   openssl req -x509 -nodes -out secrets/inception.crt -keyout secrets/inception.key -subj "/C=DE/ST=IDF/L=BERLIN/O=42/OU=42/CN=lgrimmei.42.fr/UID=lgrimmei.42.fr" 2> /dev/null
