@@ -13,7 +13,6 @@ RUN apt-get install -y wget php php7.4-fpm php-mysql mariadb-client curl netcat-
 RUN rm -rf /var/lib/apt/lists/*
 
 # copy wordpress config script into container
-#COPY ./tools/wp_config.sh /usr/local/bin/wp_config.sh
 COPY srcs/requirements/wordpress/tools/wp_config.sh /usr/local/bin/wp_config.sh
 
 # change executable rights of database creation script

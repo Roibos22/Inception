@@ -1,26 +1,23 @@
 #!/bin/bash
 
 ### WAIT FOR MARIADB SERVER TO BE RUNNING
-
 end_time=$((SECONDS + 10))
 while (( SECONDS < end_time )); do
-    if nc -zq 1 mariadb 3306; then # ping the MariaDB container with a 1-second timeout
-        echo "[========MARIADB IS UP AND RUNNING========]"
-        break # exit the loop if MariaDB is up
+    if nc -zq 1 mariadb 3306; then
+        echo "[### MARIADB IS UP AND RUNNING ###]"
+        break
     else
-        echo "[========WAITING FOR MARIADB TO START...========]"
-        sleep 1 # wait for 1 second before trying again
+        echo "[### WAITING FOR MARIADB TO START... ###]"
+        sleep 1
     fi
 done
 
 if (( SECONDS >= end_time )); then
-    echo "[========MARIADB IS NOT RESPONDING========]"
+    echo "[### MARIADB IS NOT RESPONDING ###]"
 fi
 
 
 ### INSTALL WORDPRESS
-
-
 # install wordpress CLI (command line interface)
 curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 
@@ -52,9 +49,6 @@ sed -i '36 s@/run/php/php7.4-fpm.sock@9000@' /etc/php/7.4/fpm/pool.d/www.conf
 
 # create a directory for php-fpm
 mkdir -p /run/php
-
-# restart php-fpm service to apply changes
-# service php7.4-fpm restart
 
 # start php-fpm service in the foreground to keep the container running
 /usr/sbin/php-fpm7.4 -F
