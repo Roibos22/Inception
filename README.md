@@ -6,7 +6,7 @@ If you spot any mistakes or have suggestions, please don't hesitate to reach out
 
 ![Screenshot from 2024-07-27 21-54-32](https://github.com/user-attachments/assets/862541a5-7fd2-403d-9c64-8899c24bdf4b)
 
-## INTRODUCTION TO DOCKER
+##
 
 ![docker-logo-horizontal](https://github.com/user-attachments/assets/b63df024-59e4-4ec2-9ed8-d61eb60e42e9)
 
@@ -119,9 +119,9 @@ docker compose -f "compose_file" restart   # Restart all containers defined in t
 
 - [Docker Documentation](https://docs.docker.com/guides/)
 
-**NGINX**
+##
 
-# NGINX
+![nginx_banner](https://github.com/user-attachments/assets/9aabe762-845d-4c7b-bf07-4f4e61cd4cce)
 
 ### What is NGINX
 
@@ -314,6 +314,355 @@ http {
       index index.php index.html index.htm;
       location / {
           try_files $uri $uri/ =404;
+      }
+
+      # Log settings
+      access_log /var/log/nginx/access.log;
+      error_log /var/log/nginx/error.log;
+  }
+}
+```
+
+
+##
+![mariadb_banner](https://github.com/user-attachments/assets/0cb377a0-d5ab-4119-8d30-e8f1c460dfd4)
+
+**What is MariaDB?**
+
+MariaDB is a database management system based on MySQL, using tables of rows and columns to efficiently organize data. In our set of containers MariaDB will be responsible for persisting our data. It basically serves as the storage for our Wordpress and Nginx containers which can run more effective when working with a MariaDB container.
+
+In order to launch the MariaDB container we obviously need to create a Dockerfile. In addition we will also create a config file, as well as a script which will be responsible for creating our initial database.
+
+**Dockerfile**
+
+```docker
+# base image
+FROM debian:bullseye
+
+# update package manager
+RUN apt-get update -y && apt-get upgrade -y
+
+# install mariadb for database and procps for process control 
+RUN apt-get install -y mariadb-server procps
+
+# clean up cached package files
+RUN rm -rf /var/lib/apt/lists/*
+
+# copy database creation script and config file from host into container
+COPY srcs/requirements/mariadb/tools/create_db.sh /usr/local/bin/create_db.sh
+COPY srcs/requirements/mariadb/conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
+
+# change executable rights of database creation script
+RUN chmod +x /usr/local/bin/create_db.sh
+
+# expose port 3306 for communication
+EXPOSE 3306
+
+# define database creation script to run when container starts
+ENTRYPOINT ["/usr/local/bin/create_db.sh"]
+```
+
+**Database Creation script**
+
+In order to create a database and user in our MariaDB server, we will make use of a bash script that executes the commands to achieve this. This script will be called via Entrypoint in our Dockerfile as shown above.
+
+- first we start our MariaDB server in the background and wait until the the startup was successful
+- After checking if the database was already created, we tackle the database and user setup, while connecting to the server via our root.
+    - we create the database and user if they do not already exist
+    - we grant all privileges to the user we created and flush those changes in order to make them take effect
+    - each of these lines is followed by a error message that will be executed in case we encounter an error
+- Lastly we shutdown and restart our mysql service in the foreground, to make sure all changes take effect and keep the container running
+
+```bash
+#!/bin/bash
+
+# Start MariaDB server
+mysqld_safe --datadir='/var/lib/mysql' &
+until mysqladmin ping -uroot -p"$(cat "$MDB_ROOT_PW")" --silent; do
+    echo "Waiting for MariaDB to start..."
+    sleep 1
+done
+
+# Check if database already exists
+DB_EXISTS=$(mysql -uroot -p"$(cat "$MDB_ROOT_PW")" -e "SHOW DATABASES LIKE '$MDB_DB_NAME'" | grep "$MDB_DB_NAME" > /dev/null; echo "$?")
+
+# Create database if it does not exist
+if [ "$DB_EXISTS" -eq 1 ]; then
+    echo "Database does not exist. Creating database and user..." >> /var/log/mariadb_env_vars.log
+    mysql -uroot -p"$(cat "$MDB_ROOT_PW")" -e "CREATE DATABASE IF NOT EXISTS \`$MDB_DB_NAME\`" || { echo 'Failed to create database' >> /var/log/mariadb_env_vars.log; exit 1; }
+    mysql -uroot -p"$(cat "$MDB_ROOT_PW")" -e "CREATE USER IF NOT EXISTS '$MDB_USER'@'%' IDENTIFIED BY '$(cat "$MDB_PW")'" || { echo 'Failed to create user' >> /var/log/mariadb_env_vars.log; exit 1; }
+    mysql -uroot -p"$(cat "$MDB_ROOT_PW")" -e "GRANT ALL PRIVILEGES ON \`$MDB_DB_NAME\`.* TO '$MDB_USER'@'%'" || { echo 'Failed to grant privileges' >> /var/log/mariadb_env_vars.log; exit 1; }
+    mysql -uroot -p"$(cat "$MDB_ROOT_PW")" -e "FLUSH PRIVILEGES;" || { echo 'Failed to flush privileges' >> /var/log/mariadb_env_vars.log; exit 1; }
+    echo "Database and user created successfully." >> /var/log/mariadb_env_vars.log
+else
+    echo "Database already exists. Skipping creation." >> /var/log/mariadb_env_vars.log
+fi
+
+# Stop the MariaDB service started by the service command
+mysqladmin shutdown -uroot -p"$(cat "$MDB_ROOT_PW")"
+
+# Start MariaDB in the foreground to keep the container running
+exec mysqld_safe --datadir='/var/lib/mysql'
+```
+
+**Config File**
+
+Below we have the configuration file, which will be used during the creation of our MariaDB server. MariaDB utilizes the file located at the path `/etc/mysql/mariadb.conf.d/50-server.cnf`, which is why we copied it there with the help of our Dockerfile.
+
+```
+# Configuration section of MySQL server
+[mysqld]
+# define directory to store data files
+datadir = /var/lib/mysql
+# define location to store process
+pid-file = /run/mysqld/mysqld.pid
+# define path to socket file
+socket  = /run/mysqld/mysqld.sock
+# define IP adresses to listen to, here set to all as we do not need to restrict anything, as we are not in a prod environment
+bind_address=*
+# define default port to listen to
+port = 3306
+# define the user that mariaDB runs as
+user = mysql
+```
+
+**.env file**
+
+As recommended in the subject, in our .env file, we will declare variables like the domain name or MariaDB passwords as environmental variables and therefore increase the security. We will incorporate these environmental variables in our containers by adding the `--env-file srcs/.env` during compiling. Keeping your credentials in an env file is bad practice tho, and we will tackle this as soon as possible, but for now we should be able to also start up our mariadb Container.
+
+```
+DOMAIN_NAME=lgrimmei.42.fr
+MYSQL_USER=lgrimmei
+MYSQL_DB_NAME=database
+MYSQL_PW=ilove42
+MYSQL_ROOT_PASSWORD=ilove42
+```
+
+##
+![docker-compose](https://github.com/user-attachments/assets/6d2071f2-6769-49bc-827b-6ab792be6087)
+
+### Move to docker-compose file
+
+As we have more than one container now (nginx and mariadb), and we will ultimately need to move to a docker-compose.yml (yaml file) anyways, we will now create one. As already described in the introduction, some advantages of using yaml files are the simplified management of multiple containers at once, as we can start all of them inside of one file, their ease of use and that they act as a single source of truth for our projects architecture.
+
+**Commands to utilize a yaml file:**
+
+```yaml
+
+# Running containers
+docker compose -f "compose_file" up -d     # Create and start containers in detached mode using the specified compose file
+    --force-recreate                       # Recreate containers even if their configuration and image haven't changed
+    --build                                # Build images before starting containersdocker-compose build # build / rebuild
+docker-compose -f "compose_file" start     # start existing container
+docker-compose -f "compose_file" restart   # restart all containers defined in yaml
+
+# Stopping 
+docker-compose -f "compose_file" down      # stop and remove contianers
+docker-compose -f "compose_file" stop      # stop container
+
+# More
+docker-compose -f "compose_file" ps        # list all containers
+docker-compose -f "compose_file" exec ...  # execute command inside of container
+docker-compose -f "compose_file" logs      # display logs of containers
+docker-compose -f "compose_file" rm        # remove stopped containers
+docker-compose -f "compose_file" kill      # force stop and remove containers
+
+```
+
+**docker-compose.yml**
+
+After specifying the file format version, we can start to define our different services, while each services runs its own container. 
+
+The first service we want to run is nginx, for which we start specifying the path to the Dockerfile we created earlier inside the build block. In the ports block we map port 433 of the host machine to port 433 of the container for the communication between those two. We also specify that our .env file should be integrated in the container as an environment file and configure the restart policy, so it always restarts. Afterward we configure the mariadb server, which follows the same pattern as the nginx sevice.
+
+```
+version: "3.8"
+
+services:
+  nginx:
+    build:
+      context: ../
+      dockerfile: srcs/requirements/nginx/Dockerfile
+    ports: 
+      - "443:443"
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  mariadb:
+    build:
+      context: ../
+      dockerfile: srcs/requirements/mariadb/Dockerfile
+    ports: 
+      - "3306:3306"
+    env_file:
+      - .env
+    restart: unless-stopped
+```
+
+
+##
+![Screenshot from 2024-07-27 22-29-48](https://github.com/user-attachments/assets/e57ff8ab-ccdc-42fd-8829-f74b181ccd6d)
+
+As the subject also requires a Makefile, we can now create one and add some commands to properly manage our containers. Our default target will be ‘help’, which will display all targets and a short information on them on the terminal. The ‘init’ target will run a bash script, which initializes our environment, folders and secrets, what will be explained later on.
+
+```
+# FILES AND DIRS
+COMPOSE_FILE	:= srcs/docker-compose.yml
+INIT_SCRIPT		:= ./srcs/init.sh
+SECRETS_DIR		:= ./secrets
+DATA_DIR		:= ../../data
+ENV_FILE		:= ./srcs/.env
+
+# Help message
+help:
+	@echo "Available targets:"
+	@echo "  init                   - Initialize data folders, credentials, and environment"
+	@echo "  run                    - Run the containers (detached)"
+	@echo "  stop                   - Stop all running containers"
+	@echo "  start                  - Start stopped containers"
+	@echo "  remove                 - Remove the containers"
+	@echo "  status                 - Show status of all containers"
+	@echo "  clean                  - Clean up secrets and environment files and prune system"
+	@echo "  help                   - Show this help message"
+
+# Initialize data folder, credentials and environment
+init:
+	@echo "\e[34mInitializing Files and Credentials...\e[0m"
+	@$(INIT_SCRIPT)
+	@echo "\e[32mInitialization complete\e[0m"
+
+# Run containers in detached mode
+run: 
+	@echo "\e[34mStarting containers ......\e[0m"
+	@docker compose -f $(COMPOSE_FILE) up -d --force-recreate --build
+	@echo "\e[32mContainers started\e[0m"
+
+# Stop all running containers
+stop:
+	@echo "\e[34mStopping all containers ...\e[0m"
+	docker stop $$(docker ps -q) > /dev/null 2>&1 || true
+	@echo "\e[32mContainers stopped\e[0m"
+
+# Start stopped containers
+start:
+	@echo "\e[34mStarting stopped containers ...\e[0m"
+	docker compose -f $(COMPOSE_FILE) start
+	@echo " \e[32mContainers started\e[0m"
+
+# Remove all containers
+remove:
+	@echo "\e[34mRemoving containers ...\e[0m"
+	@if [ ! -f $(ENV_FILE) ]; then touch $(ENV_FILE); fi
+	@docker compose -f $(COMPOSE_FILE) down
+	@echo "\e[32mContainers removed\e[0m"
+
+# Show status of all containers
+status:
+	@echo "\e[34mIMAGES OVERVIEW\e[0m"
+	@docker images
+	@echo "\e[34mCONTAINER OVERVIEW\e[0m"
+	@docker ps -a
+	@echo "\e[34mNETWORK OVERVIEW\e[0m"
+	@docker network ls
+	@echo "\e[34mCONTAINER LOGS\e[0m"
+	@if [ ! -f $(ENV_FILE) ]; then touch $(ENV_FILE); fi
+	@docker compose -f $(COMPOSE_FILE) logs
+
+# Clean up secrets and environment files and prune docker system
+clean: remove
+	@echo "\e[34mCleaning up secrets and environment files ...\e[0m"
+	@rm -fr $(SECRETS_DIR) || true
+	@rm -fr $(ENV_FILE) || true
+	@rm -fr $(DATA_DIR) || true
+	@echo "\e[32mClean up complete\e[0m"
+	@echo "\e[34mPruning Docker system ...\e[0m"
+	@docker system prune --all --force
+	@echo "\e[32mPrune complete\e[0m"
+
+.PHONY: all init run stop start down status clean
+```
+
+![php-fpm-low-memory](https://github.com/user-attachments/assets/66e1a20b-0007-4501-94e4-c9d7237b979c)
+
+
+### **CGI**
+
+In order to continue with our project, we need to quickly take a little detour and introduce CGI. **CGI** stands for **Common Gateway Interface**. It's a way for a web server to interact with external programs, often scripts, to generate web pages dynamically.
+
+Let me try to explain, using a restaurant as reference: Think of a web server as a restaurant. When you (the user) go to the restaurant, you place an order (make a request) with the waiter (the web server). The waiter then takes your order to the kitchen (the external program or script) to prepare your food (generate the web page). Once the food is ready, the waiter brings it back to you.
+
+### How CGI Works
+
+1. **User Request**: You open your web browser and type in a URL or click on a link what sends a request to the web server.
+2. **Server Receives Request**: The web server receives your request and sees that it needs to run a CGI script to generate the response.
+3. **Server Runs the Script**: The web server starts the CGI script, which can include accessing a database, processing data, etc..
+4. **Script Generates Output**: The script generates some output, usually in the form of HTML which will makes up our web pages.
+5. **Server Sends Response**: The web server takes the output from the script and sends it back to your web browser.
+6. **Browser Receives Request:** Your browser then displays the web page.
+
+So in summary CGI is a way for web servers to run external programs to generate web pages dynamically. It allows websites to be interactive and respond to user input, rather than just serving static pages. However, CGI can be slow because it starts a new process for each request, which is why more modern methods like FastCGI and PHP-FPM are often used today.
+
+### **PHP-FPM (PHP FastCGI Process Manager)**
+
+**FastCGI** is a protocol for interfacing interactive programs with a web server. It is an improvement over the older CGI protocol, providing better performance by keeping the PHP interpreter running between requests, thus avoiding the overhead of starting and stopping a process for each request.
+
+**Advantages of Using PHP-FPM and FastCGI ocer traditional CGI with WordPress and Nginx**
+
+1. Improved Performance through Persistent Processes and load balancing
+2. Better Resource Management thorugh configuration flexibility
+3. Scalability
+4. Security
+5. Compatibility with Nginx
+
+**How It Works in our Docker Stack**
+
+1. **Nginx Container: A**cts as the web server, handling incoming HTTP requests and forwarding PHP requests to the PHP-FPM process using the FastCGI protocol.
+2. **WordPress Container with PHP-FPM installed**: Processes PHP code for WordPress and manages PHP processes efficiently.
+3. **MariaDB Container**: Stores the WordPress database, which PHP-FPM accesses to retrieve and store data.
+
+### Congiguring PHP in our Containers
+
+Next do downloading and running php-fpm in our wordpress container, we will also need to make some adjustments in our earlier work to make sure php-fpm is properly integrated in our system:
+
+**nginx.conf**
+
+In our configuration for the nginx server, we need to make a few adjustments in order to properly handle the .php files.
+
+- We includes a configuration file (fastcgi-php.conf) that contains common FastCGI parameters for PHP
+- Then we need to make sure that our PHP requests are passed to the wordpress server containing php-fpm on port 9000.
+- The fastcgi_param line basically sets the SCRIPT_FILENAME parameter, which tells the FastCGI server the path to the script that needs to be executed.
+- Afterward we include another configuration file (fastcgi_params) that sets additional FastCGI parameters. These parameters are necessary for the proper functioning of PHP-FPM with Nginx.
+
+```
+# Worker process configuration
+user www-data;
+worker_processes auto;
+pid /run/nginx.pid;
+
+# Events module settings
+events {
+  worker_connections 1024;
+}
+
+http {
+  server {
+      # SSL settings
+      server_name lgrimmei.42.fr;
+      listen 443 ssl;
+      listen [::]:443 ssl;
+      ssl_protocols TLSv1.2 TLSv1.3;
+			ssl_certificate /etc/nginx/ssl/inception.crt;
+			ssl_certificate_key /etc/nginx/ssl/inception.key;
+
+      # File system settings
+      root /usr/share/nginx/html; # /var/www/html
+      index index.php index.html index.htm;
+      location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass wordpress:9000;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
       }
 
       # Log settings
