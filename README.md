@@ -583,6 +583,104 @@ clean: remove
 .PHONY: all init run stop start down status clean
 ```
 
+![wordpress-logo-banner](https://github.com/user-attachments/assets/c3de87bf-9754-470d-b6a6-59be27a61276)
+
+**What is WordPress?**
+
+WordPress is a popular open-source content management system (CMS) used for creating and managing websites and blogs. It is known for its user-friendly interface, extensive plugin ecosystem, and customizable themes, making it accessible for both beginners and advanced users. In our Docker stack, WordPress is used as the CMS container that handles our website's content and presentation. In order to properly setup our WordPress container, we again have to write a Dockerfile and a script that installs WordPress and creates a mysql database for it.
+
+**Dockerfile**
+
+```docker
+# base image
+FROM debian:bullseye
+
+RUN mkdir -p /var/www/wordpress
+
+# update package manager
+RUN apt-get update -y && apt-get upgrade -y
+
+# install packages
+RUN apt-get install -y wget php php7.4-fpm php-mysql mariadb-client curl netcat-traditional sendmail
+
+# clean up cached package files
+RUN rm -rf /var/lib/apt/lists/
+
+# copy WordPress config script into container
+COPY srcs/requirements/wordpress/tools/wp_config.sh /usr/local/bin/wp_config.sh
+
+# change executable rights of database creation script
+RUN chmod +x /usr/local/bin/wp_config.sh
+
+# define WordPress config script to run when container starts
+ENTRYPOINT ["/usr/local/bin/wp_config.sh"]
+```
+
+**wp_config.sh**
+
+In our WordPress configuration script, we basically do the following three things:
+
+- First we wait for our mariadb server to be up and running, what is a prerequisite for the rest of the script
+- Then we install WordPress inside of our container and configure it according to our needs while also creating a database for it
+- Our last step then is to configure php-fpm and start it in the foreground to keep the Container running
+
+```
+#!/bin/bash
+
+### WAIT FOR MARIADB SERVER TO BE RUNNING
+end_time=$((SECONDS + 10))
+while (( SECONDS < end_time )); do
+    if nc -zq 1 mariadb 3306; then
+        echo "[### MARIADB IS UP AND RUNNING ###]"
+        break
+    else
+        echo "[### WAITING FOR MARIADB TO START... ###]"
+        sleep 1
+    fi
+done
+
+if (( SECONDS >= end_time )); then
+    echo "[### MARIADB IS NOT RESPONDING ###]"
+fi
+
+### INSTALL WordPress
+# install WordPress CLI (command line interface)
+curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+
+# make the wp command globally executable
+chmod +x wp-cli.phar
+mv wp-cli.phar /usr/local/bin/wp 
+
+# go to WordPress directory and change its permission and owner so nginx can work with it
+cd /var/www/wordpress
+chmod -R 755 /var/www/wordpress/
+chown -R www-data:www-data /var/www/wordpress
+
+# download WordPress into /var/www/WordPress directory
+wp core download --allow-root
+
+# create wp-config.php file with details
+wp core config --dbhost=mariadb:3306 --dbname="$MDB_DB_NAME" --dbuser="$MDB_USER" --dbpass="$(<"$MDB_PW")" --allow-root
+
+# install WordPress with details
+wp core install --url="$DOMAIN_NAME" --title="$WP_TITLE" --admin_user="$WP_ADMIN_NAME" --admin_password="$(<"$WP_ADMIN_PW")" --admin_email="$WP_ADMIN_EMAIL" --allow-root
+
+# create new user
+wp user create "$WP_USER_NAME" "$WP_USER_EMAIL" --user_pass="$(<"$WP_USER_PW")" --role="$WP_USER_ROLE" --allow-root
+
+### CONFIGURE PHP
+
+# change listen port from unix socket to 9000
+sed -i '36 s@/run/php/php7.4-fpm.sock@9000@' /etc/php/7.4/fpm/pool.d/www.conf
+
+# create a directory for php-fpm
+mkdir -p /run/php
+
+# start php-fpm service in the foreground to keep the container running
+/usr/sbin/php-fpm7.4 -F
+```
+
+
 ![php-fpm-low-memory](https://github.com/user-attachments/assets/66e1a20b-0007-4501-94e4-c9d7237b979c)
 
 
