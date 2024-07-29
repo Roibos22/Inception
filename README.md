@@ -769,3 +769,51 @@ http {
   }
 }
 ```
+
+**Update docker-compose.yml**
+
+To include the WordPress container in our Application, we also have to add a new WordPress service to the docker-compose.yml file. This will follow the same pattern as the nginx and mariadb service and can look like follow:
+
+```
+services:
+
+  mariadb:
+    container_name: mariadb
+    build:
+      context: ../
+      dockerfile: srcs/requirements/mariadb/Dockerfile
+    ports: 
+      - "3306:3306"
+    env_file:
+      - .env
+    restart: unless-stopped
+ 
+  wordpress:
+    container_name: wordpress
+    build:
+      context: ../
+      dockerfile: srcs/requirements/wordpress/Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - mariadb
+    restart: unless-stopped
+    
+  nginx:
+    container_name: nginx
+    build:
+      context: ../
+      dockerfile: srcs/requirements/nginx/Dockerfile
+    ports: 
+      - "443:443"
+    env_file:
+      - .env
+    depends_on:
+      - wordpress
+    restart: unless-stopped
+```
+
+![1_kw7ICgo0vH-USSLGyq8dqg](https://github.com/user-attachments/assets/5c64f845-ad7a-41d3-b47f-d420e28f62eb)
+
+
+
