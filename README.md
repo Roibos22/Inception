@@ -1,3 +1,6 @@
+### Table Of Contents
+
+
 # INCEPTION
 
 Welcome to my repository for the Inception project at 42 Berlin! This project involves setting up a multi-container Docker application, which includes configuring various services and ensuring they work seamlessly together. 
@@ -5,6 +8,64 @@ I wrote this guide primarily for my own learning, as this topic was entirely new
 If you spot any mistakes or have suggestions, please don't hesitate to reach out!
 
 ![Screenshot from 2024-07-27 21-54-32](https://github.com/user-attachments/assets/862541a5-7fd2-403d-9c64-8899c24bdf4b)
+
+##
+
+## Installation Guide
+
+### Prerequisites
+- Docker installed on your system
+- Docker Compose installed on your system
+
+
+### Installation
+1. Clone the Repository 
+
+```
+git clone https://github.com/yourusername/inception-project.git Inception
+```   
+
+1. Move into Repository
+
+```
+cd Inception
+``` 
+
+1. Initialize the Environment
+
+```
+make init
+```
+
+1. Build and Run the Containers
+
+```
+make run
+```
+
+1. Access the Services
+
+**nginx:**
+
+Open your browser and go to `https://lgrimmei.42.fr`
+
+**WordPress:**
+
+Open your browser and go to `https://lgrimmei.42.fr/wp-login.php` . Login with the data from the .env file and the secrets folder.
+
+**MariaDB**
+
+Move into mariadb container with the command
+
+```
+docker exec -it mariadb bash
+``` 
+
+Access the database with the command
+
+```
+mysql
+```
 
 ##
 
