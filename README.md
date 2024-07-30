@@ -57,7 +57,7 @@ Docker Network is a feature that allows containers to communicate with each othe
 
 You can also define your own networks using for example a .yml file what allows to create more complex networks. 
 
-### **What is Docker Compose?**
+### What is Docker Compose?
 
 This is a tool for defining and running multi-container applications. It lets you describe all the services (containers) your application needs in a single file (.yml) and easily start them up together with a single command. Imagine it as a way to manage a whole recipe book (with multiple recipes) for your application.
 
@@ -115,7 +115,7 @@ docker compose -f "compose_file" stop      # Stop running containers without rem
 docker compose -f "compose_file" restart   # Restart all containers defined in the compose file
 ```
 
-### Resources
+### Further Resources
 
 - [Docker Documentation](https://docs.docker.com/guides/)
 
@@ -151,7 +151,7 @@ http {
 }
 ```
 
-**Dockerfile**
+### Dockerfile
 
 This Dockerfile builds our first custom Nginx web server image. 
 
@@ -178,7 +178,7 @@ EXPOSE 443
 CMD ["nginx", "-g", "daemon off;"]
 ```
 
-**Run the nginx container**
+### Run the nginx container
 
 In the folder where the Dockerfile and nginx.conf file are located, we can now execute the following command to first build an image and then run the container based on that image
 
@@ -231,7 +231,7 @@ EXPOSE 443
 CMD ["nginx", "-g", "daemon off;"]
 ```
 
-**Updating nginx.conf file:**
+### Updating nginx.conf file:
 
 We also need to make some adjustments in the nginx.conf file in order to confirm to TLS:
 
@@ -325,9 +325,9 @@ http {
 
 
 ##
-![mariadb_banner](https://github.com/user-attachments/assets/0cb377a0-d5ab-4119-8d30-e8f1c460dfd4)
+![mariadb-banner](https://github.com/user-attachments/assets/d361e358-99c7-4d78-af5e-8bbc14a2365a)
 
-**What is MariaDB?**
+### What is MariaDB?
 
 MariaDB is a database management system based on MySQL, using tables of rows and columns to efficiently organize data. In our set of containers MariaDB will be responsible for persisting our data. It basically serves as the storage for our Wordpress and Nginx containers which can run more effective when working with a MariaDB container.
 
@@ -362,7 +362,7 @@ EXPOSE 3306
 ENTRYPOINT ["/usr/local/bin/create_db.sh"]
 ```
 
-**Database Creation script**
+### Database Creation script
 
 In order to create a database and user in our MariaDB server, we will make use of a bash script that executes the commands to achieve this. This script will be called via Entrypoint in our Dockerfile as shown above.
 
@@ -405,7 +405,7 @@ mysqladmin shutdown -uroot -p"$(cat "$MDB_ROOT_PW")"
 exec mysqld_safe --datadir='/var/lib/mysql'
 ```
 
-**Config File**
+### Config File
 
 Below we have the configuration file, which will be used during the creation of our MariaDB server. MariaDB utilizes the file located at the path `/etc/mysql/mariadb.conf.d/50-server.cnf`, which is why we copied it there with the help of our Dockerfile.
 
@@ -426,7 +426,7 @@ port = 3306
 user = mysql
 ```
 
-**.env file**
+### .env file
 
 As recommended in the subject, in our .env file, we will declare variables like the domain name or MariaDB passwords as environmental variables and therefore increase the security. We will incorporate these environmental variables in our containers by adding the `--env-file srcs/.env` during compiling. Keeping your credentials in an env file is bad practice tho, and we will tackle this as soon as possible, but for now we should be able to also start up our mariadb Container.
 
@@ -469,7 +469,7 @@ docker-compose -f "compose_file" kill      # force stop and remove containers
 
 ```
 
-**docker-compose.yml**
+### docker-compose.yml
 
 After specifying the file format version, we can start to define our different services, while each services runs its own container. 
 
@@ -583,9 +583,10 @@ clean: remove
 .PHONY: all init run stop start down status clean
 ```
 
+##
 ![wordpress-logo-banner](https://github.com/user-attachments/assets/c3de87bf-9754-470d-b6a6-59be27a61276)
 
-**What is WordPress?**
+### What is WordPress?
 
 WordPress is a popular open-source content management system (CMS) used for creating and managing websites and blogs. It is known for its user-friendly interface, extensive plugin ecosystem, and customizable themes, making it accessible for both beginners and advanced users. In our Docker stack, WordPress is used as the CMS container that handles our website's content and presentation. In order to properly setup our WordPress container, we again have to write a Dockerfile and a script that installs WordPress and creates a mysql database for it.
 
@@ -680,7 +681,7 @@ mkdir -p /run/php
 /usr/sbin/php-fpm7.4 -F
 ```
 
-
+##
 ![php-fpm-low-memory](https://github.com/user-attachments/assets/66e1a20b-0007-4501-94e4-c9d7237b979c)
 
 
@@ -772,7 +773,7 @@ http {
 
 **Update docker-compose.yml**
 
-To include the WordPress container in our Application, we also have to add a new WordPress service to the docker-compose.yml file. This will follow the same pattern as the nginx and mariadb service and can look like follow:
+To include the WordPress container in our Application, we also have to add a new WordPress service to the docker-compose.yml file. This will follow the same pattern as the nginx and mariadb service and can look like follows:
 
 ```
 services:
@@ -813,7 +814,214 @@ services:
     restart: unless-stopped
 ```
 
-![1_kw7ICgo0vH-USSLGyq8dqg](https://github.com/user-attachments/assets/5c64f845-ad7a-41d3-b47f-d420e28f62eb)
+##
+![Screenshot from 2024-07-30 17-18-59](https://github.com/user-attachments/assets/3c7fa8fe-81bc-4611-a321-365059b5f43f)
+
+
+### What are Docker Secrets?
+
+Docker Secrets is a feature of Docker that allows us to securely manage sensitive data, such as passwords, API keys, and certificates, within our Docker containers. It helps us in preventing unauthorized access and accidental leaks of sensitive data. Docker secrets will be encrypted and stored by Docker, which makes them only accesible to a service if we explicitly define it. Inside our Container we can then access the secrets in the /run/secrets directory. In our yaml file, we will therefore add the ‘environment’ and ‘secrets’ block to all of our services, while saving the path to the secrets file in the environment and making the secret accesible in the secrets block. Furthermore we will also need to create a secrets block separated from the services, where we define our secrets.
+
+```
+services:
+
+  mariadb:
+    container_name: mariadb
+    build:
+      context: ../
+      dockerfile: srcs/requirements/mariadb/Dockerfile
+    ports: 
+      - "3306:3306"
+    env_file:
+      - .env
+    restart: unless-stopped
+    environment:
+      MDB_PW: /run/secrets/mdb_pw
+      MDB_ROOT_PW: /run/secrets/mdb_root_pw
+    secrets:
+      - mdb_pw
+      - mdb_root_pw
+
+
+  wordpress:
+    container_name: wordpress
+    build:
+      context: ../
+      dockerfile: srcs/requirements/wordpress/Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - mariadb
+    restart: unless-stopped
+    environment:
+      MDB_PW: /run/secrets/mdb_pw
+      WP_ADMIN_PW: /run/secrets/wp_admin_pw
+      WP_USER_PW: /run/secrets/wp_user_pw
+    secrets:
+      - mdb_pw
+      - wp_admin_pw
+      - wp_user_pw
+    
+  nginx:
+    container_name: nginx
+    build:
+      context: ../
+      dockerfile: srcs/requirements/nginx/Dockerfile
+    ports: 
+      - "443:443"
+    env_file:
+      - .env
+    depends_on:
+      - wordpress
+    restart: unless-stopped
+    secrets:
+      - key
+      - cert
+
+secrets:
+  mdb_pw:
+    file: ../secrets/db_password.txt
+  mdb_root_pw:
+    file: ../secrets/db_root_password.txt
+  wp_admin_pw:
+    file: ../secrets/wp_root_password.txt
+  wp_user_pw:
+    file: ../secrets/wp_user_password.txt
+  cert:
+    file: ../secrets/inception.crt
+  key:
+    file: ../secrets/inception.key
+```
+
+##
+![Screenshot from 2024-07-30 15-23-47](https://github.com/user-attachments/assets/69fe1f26-8037-416e-b0ad-21d66d67a030)
+
+### Setting up Volumes and a Network
+
+Now that we have all our three services up and running, we need to set up a Docker Network through wich the services can properly communicate, as well as the Volumes so our data persists on our machine through Docker startups.
+
+**Docker Volumes** are a mechanism for persisting data generated by and used by Docker containers. They are designed to be independent of the container life-cycle, meaning that data stored in volumes is not deleted when the container is removed. Volumes can also be shared between multiple containers, offer good performance and are easy to back up and restore. We can create a new Volume by defining it in a separate block in the yaml file and then add it to our service. In our case we create a volume for mariadb and WordPress at the folders we created in the init.sh script. The definition of our volumes include the volume name and the volume driver, which will be set to local and will store our data on our local file system. The further specifications for the driver include the device (path to the folder), the extra option bind (which lets us mount the directory from our host into the container) and the type of none (which indicates, that no special file system is used).
+
+The **Docker Network** we will create, will enable communication between Docker containers. Networks provide isolated environments where containers can securely and efficiently communicate with each other.  Among others, Docker Networks facilitate scalability, as new containers can join the network and communicate with existing containers without additional configuration.
+
+After adding our Secrets, Volumes and the Network to the docker-compose file, it could look like this:
+
+```
+services:
+
+  mariadb:
+    container_name: mariadb
+    build:
+      context: ../
+      dockerfile: srcs/requirements/mariadb/Dockerfile
+    ports: 
+      - "3306:3306"
+    env_file:
+      - .env
+    networks:
+      - inception
+    volumes:
+      - mariadb:/var/lib/mysql
+    restart: unless-stopped
+    environment:
+      MDB_PW: /run/secrets/mdb_pw
+      MDB_ROOT_PW: /run/secrets/mdb_root_pw
+    secrets:
+      - mdb_pw
+      - mdb_root_pw
+
+
+  wordpress:
+    container_name: wordpress
+    build:
+      context: ../
+      dockerfile: srcs/requirements/wordpress/Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - mariadb
+    volumes:
+      - wordpress:/var/www/wordpress
+    networks:
+      - inception
+    restart: unless-stopped
+    environment:
+      MDB_PW: /run/secrets/mdb_pw
+      WP_ADMIN_PW: /run/secrets/wp_admin_pw
+      WP_USER_PW: /run/secrets/wp_user_pw
+    secrets:
+      - mdb_pw
+      - wp_admin_pw
+      - wp_user_pw
+    
+  nginx:
+    container_name: nginx
+    build:
+      context: ../
+      dockerfile: srcs/requirements/nginx/Dockerfile
+    ports: 
+      - "443:443"
+    env_file:
+      - .env
+    depends_on:
+      - wordpress
+    volumes:
+      - wordpress:/var/www/wordpress
+    networks:
+      - inception
+    restart: unless-stopped
+    secrets:
+      - key
+      - cert
+
+volumes:
+  mariadb:
+    name: mariadb
+    driver: local
+    driver_opts:
+      device: /home/lgrimmei/data/mariadb
+      o: bind
+      type: none
+  wordpress:
+    name: wordpress
+    driver: local
+    driver_opts:
+      device: /home/lgrimmei/data/wordpress
+      o: bind
+      type: none
+  
+networks:
+  inception:
+    name: inception
+
+
+secrets:
+  mdb_pw:
+    file: ../secrets/db_password.txt
+  mdb_root_pw:
+    file: ../secrets/db_root_password.txt
+  wp_admin_pw:
+    file: ../secrets/wp_root_password.txt
+  wp_user_pw:
+    file: ../secrets/wp_user_password.txt
+  cert:
+    file: ../secrets/inception.crt
+  key:
+    file: ../secrets/inception.key
+```
+
+##
+
+### Congratulations!
+
+After finishing the last step, we should finally be finished with our Inception Project! We can now initialize the Application with ‘make init’ and then run the Containers with ‘make run’. By opening for example https://lgrimmei.42.fr/wp-login.php we can log into our WordPress dashboard and we can also access our database through the terminal by running the command `mysql` inside of the mariadb container.
+
+If you still did not get enough our of the project, you can further improve it, by for example adding your personal static html files, or continue with more tasks from the Bonus.
+
+
+
+
+
 
 
 
