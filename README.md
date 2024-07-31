@@ -2,12 +2,19 @@
 # INCEPTION
 
 ### Table Of Contents
+1. [Introduction](#introduction)
+2. [Installation Guide](#installation-guide)
+3. [What is Docker?](#what-is-docker)
+4. [Initial NGINX Container](#what-is-nginx)
+5. [Initial MariaDB Container](#what-is-mariadb)
+6. [Docker Compose File](#move-to-docker-compose-file)
+7. [Makefile](#makefile)
+8. [Initial WordPress Container](#what-is-wordpress)
+9. [PHP-FPM setup (CGI)](#cgi)
+10. [Docker Secrets & Initialization Script](#what-are-docker-secrets)
+11. [Volumes and Network](#setting-up-volumes-and-a-network)
 
-- [Installation Guide](#installation-guide)
-- [What is NGINX](#what-is-nginx)
-- ### What is NGINX
-- 
-
+## Introduction
 
 Welcome to my repository for the Inception project at 42 Berlin! This project involves setting up a multi-container Docker application, which includes configuring various services and ensuring they work seamlessly together. 
 I wrote this guide primarily for my own learning, as this topic was entirely new to me and by documenting and repeating these concepts, I’ve gained a good understanding and can recommend doing the same.
@@ -568,6 +575,8 @@ services:
 
 ##
 ![Screenshot from 2024-07-27 22-29-48](https://github.com/user-attachments/assets/e57ff8ab-ccdc-42fd-8829-f74b181ccd6d)
+
+## Makefile
 
 As the subject also requires a Makefile, we can now create one and add some commands to properly manage our containers. Our default target will be ‘help’, which will display all targets and a short information on them on the terminal. The ‘init’ target will run a bash script, which initializes our environment, folders and secrets, what will be explained later on.
 
