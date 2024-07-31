@@ -1,15 +1,19 @@
-### Table Of Contents
-
 
 # INCEPTION
+
+### Table Of Contents
+
+- [Installation Guide](#installation-guide)
+- [What is NGINX](#what-is-nginx)
+- ### What is NGINX
+- 
+
 
 Welcome to my repository for the Inception project at 42 Berlin! This project involves setting up a multi-container Docker application, which includes configuring various services and ensuring they work seamlessly together. 
 I wrote this guide primarily for my own learning, as this topic was entirely new to me and by documenting and repeating these concepts, I’ve gained a good understanding and can recommend doing the same.
 If you spot any mistakes or have suggestions, please don't hesitate to reach out!
 
 ![Screenshot from 2024-07-27 21-54-32](https://github.com/user-attachments/assets/862541a5-7fd2-403d-9c64-8899c24bdf4b)
-
-##
 
 ## Installation Guide
 
