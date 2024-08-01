@@ -32,7 +32,7 @@ run:
 # Stop all running containers
 stop:
 	@echo "\e[34mStopping all containers ...\e[0m"
-	docker stop $$(docker ps -q) > /dev/null 2>&1 || true
+	@ docker stop $$(docker ps -q) > /dev/null 2>&1 || true
 	@echo "\e[32mContainers stopped\e[0m"
 
 # Start stopped containers
