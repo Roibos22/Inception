@@ -38,7 +38,7 @@ stop:
 # Start stopped containers
 start:
 	@echo "\e[34mStarting stopped containers ...\e[0m"
-	docker compose -f $(COMPOSE_FILE) start
+	@docker compose -f $(COMPOSE_FILE) start
 	@echo " \e[32mContainers started\e[0m"
 
 # Remove all containers
