@@ -189,7 +189,10 @@ docker compose -f "compose_file" restart   # Restart all containers defined in t
 
 ### Further Resources
 
-- [Docker Documentation](https://docs.docker.com/guides/)
+- [Docker Guides](https://docs.docker.com/guides/)
+- [Docker Manuals](https://docs.docker.com/manuals/)
+- [Learn Docker in 7 Easy Steps](https://www.youtube.com/watch?v=gAkwW2tuIqE)
+- [Docker Tutorial for Beginners - FULL COURSE in 3 Hours](https://www.youtube.com/watch?v=3c-iBn73dDE)
 
 ##
 
@@ -394,7 +397,11 @@ http {
   }
 }
 ```
+### Further Resources
 
+- [NGINX Docker Docs](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-docker/)
+- [NFINX Docs](https://nginx.org/en/docs/)
+- [Configure Nginx Docker](https://nginxtutorials.com/nginx-docker/)
 
 ##
 ![mariadb-banner](https://github.com/user-attachments/assets/d361e358-99c7-4d78-af5e-8bbc14a2365a)
@@ -510,6 +517,12 @@ MYSQL_PW=ilove42
 MYSQL_ROOT_PASSWORD=ilove42
 ```
 
+### Further Resources
+
+- [Get Started with MariaDB using Docker in 3 Steps](https://mariadb.com/resources/blog/get-started-with-mariadb-using-docker-in-3-steps/)
+- [Installing and Using MariaDB via Docker](https://mariadb.com/kb/en/installing-and-using-mariadb-via-docker/)
+- [Docker Tutorial - basic setup MariaDB in a Docker container](https://www.youtube.com/watch?v=LFSSS_wOFsg)
+
 ##
 ![docker-compose](https://github.com/user-attachments/assets/6d2071f2-6769-49bc-827b-6ab792be6087)
 
@@ -571,6 +584,12 @@ services:
       - .env
     restart: unless-stopped
 ```
+
+### Further Resources
+
+- [Docker Compose will BLOW your MIND!! (a tutorial)](https://www.youtube.com/watch?v=DM65_JyGxCo)
+- [Sample apps with Compose | Docker Docs](https://docs.docker.com/compose/samples-for-compose/)
+- [Docker Compose Tutorial: How to Use It Effectively - Medium](https://medium.com/@vishwasacharya/docker-compose-tutorial-how-to-use-it-effectively-59c1146af97f)
 
 
 ##
@@ -755,6 +774,11 @@ mkdir -p /run/php
 /usr/sbin/php-fpm7.4 -F
 ```
 
+### Further Resources
+
+- [Quick Wordpress Setup With Docker - YouTube](https://www.youtube.com/watch?v=pYhLEV-sRpY)
+- [How To Install WordPress With Docker Compose | DigitalOcean](https://www.digitalocean.com/community/tutorials/how-to-install-wordpress-with-docker-compose)
+
 ##
 ![php-fpm-low-memory](https://github.com/user-attachments/assets/66e1a20b-0007-4501-94e4-c9d7237b979c)
 
@@ -844,6 +868,13 @@ http {
   }
 }
 ```
+
+### Further Resources
+
+- [What is CGI, FastCGI and PHP-FPM](https://quantumwarp.com/kb/articles/34-web-server/1020-what-is-cgi-fastcgi-and-php-fpm)
+- [Difference between PHP-CGI and PHP-FPM](https://www.basezap.com/difference-php-cgi-php-fpm/)
+- [PHP FastCGI Process Manager - PHP-FPM | cPanel & WHM Documentation](https://docs.cpanel.net/knowledge-base/php-fpm/php-fastcgi-process-manager-php-fpm/)
+- [How to Setup PHP on Nginx with FastCGI (PHP-FPM)](https://www.builddevops.com/post/how-to-setup-php-on-nginx-with-fastcgi-php-fpm)
 
 **Update docker-compose.yml**
 
@@ -967,6 +998,11 @@ secrets:
     file: ../secrets/inception.key
 ```
 
+### Further Resources
+
+- [The Complete Guide to Docker Secrets - Earthly Blog](https://earthly.dev/blog/docker-secrets/)
+- [Docker Secrets: Managing Sensitive Data - A Guide for Beginners](https://www.appsdeveloperblog.com/docker-secrets-managing-sensitive-data/)
+- [Manage sensitive data with Docker secrets | Docker Docs](https://docs.docker.com/engine/swarm/secrets/)
 ##
 ![Screenshot from 2024-07-30 15-23-47](https://github.com/user-attachments/assets/69fe1f26-8037-416e-b0ad-21d66d67a030)
 
@@ -1083,6 +1119,12 @@ secrets:
   key:
     file: ../secrets/inception.key
 ```
+
+### Further Resources
+
+- [Docker Networking Tutorial, ALL Network Types explained!](https://www.youtube.com/watch?v=5grbXvV_DSk)
+- [Docker Volumes | Tutorial - YouTube](https://www.youtube.com/watch?v=utbuNtqlLh0)
+
 
 ##
 
