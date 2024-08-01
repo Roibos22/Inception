@@ -695,7 +695,8 @@ RUN mkdir -p /var/www/wordpress
 RUN apt-get update -y && apt-get upgrade -y
 
 # install packages
-RUN apt-get install -y wget php php7.4-fpm php-mysql mariadb-client curl netcat-traditional sendmail
+RUN apt-get install -y wget php php7.4-fpm php-mysql mariadb-client curl netcat-traditional
+# sendmail
 
 # clean up cached package files
 RUN rm -rf /var/lib/apt/lists/
@@ -1020,6 +1021,7 @@ After adding our Secrets, Volumes and the Network to the docker-compose file, it
 services:
 
   mariadb:
+    image: mariadb
     container_name: mariadb
     build:
       context: ../
@@ -1042,6 +1044,7 @@ services:
 
 
   wordpress:
+    image: wordpress
     container_name: wordpress
     build:
       context: ../
@@ -1065,6 +1068,7 @@ services:
       - wp_user_pw
     
   nginx:
+    image nginx
     container_name: nginx
     build:
       context: ../
@@ -1131,6 +1135,8 @@ secrets:
 ### Congratulations!
 
 After finishing the last step, we should finally be finished with our Inception Project! We can now initialize the Application with ‘make init’ and then run the Containers with ‘make run’. By opening for example https://lgrimmei.42.fr/wp-login.php we can log into our WordPress dashboard and we can also access our database through the terminal by running the command `mysql` inside of the mariadb container.
+
+After completing the project, i got aware that my log displays database connection errors, however the functionality of the database is still working. Also i removed the sendmail package in order to improve the startup time.
 
 If you still did not get enough our of the project, you can further improve it, by for example adding your personal static html files, or continue with more tasks from the Bonus.
 
