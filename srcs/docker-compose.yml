@@ -2,6 +2,7 @@
 services:
 
   mariadb:
+    image: mariadb
     container_name: mariadb
     build:
       context: ../
@@ -24,6 +25,7 @@ services:
 
 
   wordpress:
+    image: wordpress
     container_name: wordpress
     build:
       context: ../
@@ -47,6 +49,7 @@ services:
       - wp_user_pw
     
   nginx:
+    image: nginx
     container_name: nginx
     build:
       context: ../
