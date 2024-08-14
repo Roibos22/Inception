@@ -36,25 +36,25 @@ If you spot any mistakes or have suggestions, please don't hesitate to reach out
 git clone https://github.com/yourusername/inception-project.git Inception
 ```   
 
-1. Move into Repository
+2. Move into Repository
 
 ```
 cd Inception
 ``` 
 
-1. Initialize the Environment
+3. Initialize the Environment
 
 ```
 make init
 ```
 
-1. Build and Run the Containers
+4. Build and Run the Containers
 
 ```
 make run
 ```
 
-1. Access the Services
+### Access the Services
 
 **nginx:**
 
