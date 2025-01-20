@@ -33,7 +33,7 @@ If you spot any mistakes or have suggestions, please don't hesitate to reach out
 1. Clone the Repository 
 
 ```
-git clone https://github.com/yourusername/inception-project.git Inception
+git clone https://github.com/Roibos22/inception-project.git Inception
 ```   
 
 2. Move into Repository
