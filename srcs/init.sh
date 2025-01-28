@@ -1,45 +1,50 @@
 #!/bin/bash
 
+USERNAME=$(whoami)
+export USERNAME
+
 # Function to generate a random password
 generate_password() {
   openssl rand -base64 8
 }
 
 # CREATE WORDPRESS DIRECTORY
-DIR="/home/lgrimmei/data/wordpress"
+DIR="data/wordpress"
 if [ -d "$DIR" ]; then
   rm -fr "$DIR"
   echo -e "\e[33m✔\e[0m Directory $DIR removed."
 fi
 mkdir -p "$DIR"
 echo -e "\e[32m✔\e[0m Directory $DIR created."
+chmod -R 755 $DIR
 
 # CREATE MARIADB DIRECTORY
-DIR="/home/lgrimmei/data/mariadb"
+DIR="data/mariadb"
 if [ -d "$DIR" ]; then
   rm -fr "$DIR"
   echo -e "\e[33m✔\e[0m Directory $DIR removed."
 fi
 mkdir -p "$DIR"
 echo -e "\e[32m✔\e[0m Directory $DIR created."
+chmod -R 755 $DIR
 
 # CREATE SECRETS DIRECTORY AND GENERATE PASSWORDS
-DIR="/home/lgrimmei/Desktop/Inception/secrets"
+DIR="/Users/$USERNAME/secrets"
 if [ -d "$DIR" ]; then
   rm -fr "$DIR"
   echo -e "\e[33m✔\e[0m Directory $DIR removed."
 fi
-mkdir -m 775 secrets
+mkdir -m 775 $DIR
 echo -e "\e[32m✔\e[0m Directory $DIR created."
-generate_password > secrets/wp_user_password.txt
-generate_password > secrets/wp_root_password.txt
-generate_password > secrets/db_password.txt
-generate_password > secrets/db_root_password.txt
+generate_password > $DIR/wp_user_password.txt
+generate_password > $DIR/wp_root_password.txt
+generate_password > $DIR/db_password.txt
+generate_password > $DIR/db_root_password.txt
 echo -e "\e[32m✔\e[0m Secrets created."
 
 # CREATE SSL CERTIFICATES
-if [ ! -f "secrets/inception.crt" ] || [ ! -f "secrets/inception.key" ]; then
-  openssl req -x509 -nodes -out secrets/inception.crt -keyout secrets/inception.key -subj "/C=DE/ST=IDF/L=BERLIN/O=42/OU=42/CN=lgrimmei.42.fr/UID=lgrimmei.42.fr" 2> /dev/null
+if [ ! -f "$DIR/inception.crt" ] || [ ! -f "$DIR/inception.key" ]; then
+  openssl req -x509 -nodes -out $DIR/inception.crt -keyout $DIR/inception.key -subj "/C=DE/ST=IDF/L=BERLIN/O=42/OU=42/CN=lgrimmei.42.fr/UID=lgrimmei.42.fr" 2> /dev/null
   echo -e "\e[32m✔\e[0m SSL certificates created."
 else
   echo -e "\e[33m✔\e[0m SSL certificates already exist."
@@ -50,6 +55,7 @@ if [ -f "srcs/.env" ]; then
   rm -fr srcs/.env
   echo -e "\e[33m✔\e[0m .env file removed."
 fi
+echo "USERNAME=$(whoami)" >> srcs/.env
 echo "DOMAIN_NAME=lgrimmei.42.fr" >> srcs/.env
 echo "#mariadb" >> srcs/.env
 echo "MDB_USER=lgrimmei" >> srcs/.env

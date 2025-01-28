@@ -1,8 +1,9 @@
 # FILES AND DIRS
+USERNAME := $(shell whoami)
 COMPOSE_FILE	:= srcs/docker-compose.yml
 INIT_SCRIPT		:= ./srcs/init.sh
-SECRETS_DIR		:= ./secrets
-DATA_DIR		:= ../../data
+SECRETS_DIR		:= /Users/$(USERNAME)/secrets
+DATA_DIR		:= data
 ENV_FILE		:= ./srcs/.env
 
 # Help message

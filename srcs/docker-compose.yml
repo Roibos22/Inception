@@ -74,14 +74,14 @@ volumes:
     name: mariadb
     driver: local
     driver_opts:
-      device: /home/lgrimmei/data/mariadb
+      device: ../data/mariadb
       o: bind
       type: none
   wordpress:
     name: wordpress
     driver: local
     driver_opts:
-      device: /home/lgrimmei/data/wordpress
+      device: ../data/wordpress
       o: bind
       type: none
   
@@ -92,14 +92,14 @@ networks:
 
 secrets:
   mdb_pw:
-    file: ../secrets/db_password.txt
+    file: /Users/${USERNAME}/secrets/db_password.txt
   mdb_root_pw:
-    file: ../secrets/db_root_password.txt
+    file: /Users/${USERNAME}/secrets/db_root_password.txt
   wp_admin_pw:
-    file: ../secrets/wp_root_password.txt
+    file: /Users/${USERNAME}/secrets/wp_root_password.txt
   wp_user_pw:
-    file: ../secrets/wp_user_password.txt
+    file: /Users/${USERNAME}/secrets/wp_user_password.txt
   cert:
-    file: ../secrets/inception.crt
+    file: /Users/${USERNAME}/secrets/inception.crt
   key:
-    file: ../secrets/inception.key
+    file: /Users/${USERNAME}/secrets/inception.key

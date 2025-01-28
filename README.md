@@ -58,11 +58,11 @@ make run
 
 **nginx:**
 
-Open your browser and go to `https://lgrimmei.42.fr`
+Open your browser and go to `https://localhost` (`https://lgrimmei.42.fr only available if hosts file was adjusted accordingly`)
 
 **WordPress:**
 
-Open your browser and go to `https://lgrimmei.42.fr/wp-login.php` . Login with the data from the .env file and the secrets folder.
+Open your browser and go to `https://localhost/wp-login.php` . Login with the data from the .env file and the secrets folder.
 
 **MariaDB**
 
@@ -1093,14 +1093,14 @@ volumes:
     name: mariadb
     driver: local
     driver_opts:
-      device: /home/lgrimmei/data/mariadb
+      device: ./data/mariadb
       o: bind
       type: none
   wordpress:
     name: wordpress
     driver: local
     driver_opts:
-      device: /home/lgrimmei/data/wordpress
+      device: ./data/wordpress
       o: bind
       type: none
   
